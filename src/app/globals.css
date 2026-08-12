@@ -1,0 +1,444 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #000000;
+  --color-paper: #ffffff;
+  --color-accent: #fd6934;
+  --color-lime: #dbff02;
+  --color-shell: #f4f4f2;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 20px;
+  --radius-pill: 999px;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --muted: rgba(0, 0, 0, 0.6);
+  --hair: rgba(0, 0, 0, 0.1);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-shell);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- shared type scale -------------------------------------------------- */
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.display {
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.headline {
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.lede {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---- scroll reveal ------------------------------------------------------
+   Anything that never gets observed still ends up visible: content must
+   never be trapped at opacity 0. */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-out-soft),
+    transform 0.7s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- masked line reveal -------------------------------------------------
+   Each headline line sits in an overflow-hidden box and slides up from below,
+   so the type wipes into place instead of fading. Staggered per line. */
+
+.mask-line {
+  display: block;
+  overflow: hidden;
+  /* descenders would otherwise get clipped by the mask */
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.mask-line > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.9s var(--ease-out-soft);
+  transition-delay: var(--line-delay, 0ms);
+}
+
+.is-in .mask-line > span {
+  transform: none;
+}
+
+/* ---- clip reveal --------------------------------------------------------
+   A wipe instead of a fade, used on section imagery. The element is always
+   opaque — only the clip window opens — so a missed observer can never leave
+   a photo invisible. */
+
+[data-reveal="clip"] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.95s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal="clip"].is-in {
+  clip-path: inset(0 0 0 0);
+}
+
+/* ---- hover lift ---------------------------------------------------------- */
+
+.lift {
+  transition:
+    transform 0.5s var(--ease-out-soft),
+    box-shadow 0.5s var(--ease-out-soft);
+}
+
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 50px -28px rgba(0, 0, 0, 0.45);
+}
+
+/* ---- tilt ---------------------------------------------------------------
+   Tilt.tsx writes --rx/--ry from the pointer position. */
+
+.tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.45s var(--ease-out-soft);
+}
+
+/* ---- scroll progress ----------------------------------------------------- */
+
+.progress-bar {
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+  transition: transform 0.12s linear;
+}
+
+/* ---- theme morph --------------------------------------------------------
+   Stacked bands have to be opaque to cover the band beneath, so the page
+   ground itself can't cross-fade — the two effects rule each other out.
+   Instead ThemeMorph.tsx stamps the tone of whichever band owns the middle of
+   the screen onto <html>, and the fixed furniture answers to it: the nav pill
+   flips, the progress bar changes accent, and the body ground (visible on
+   overscroll) follows. */
+
+body {
+  transition: background-color 0.7s var(--ease-out-soft);
+}
+
+:root[data-tone="shell"] body {
+  background-color: var(--color-shell);
+}
+
+:root[data-tone="ink"] body {
+  background-color: var(--color-ink);
+}
+
+:root[data-tone="ink"] .nav-pill {
+  background-color: rgba(255, 255, 255, 0.92);
+  color: var(--color-ink);
+}
+
+:root[data-tone="ink"] .nav-pill a {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+:root[data-tone="ink"] .progress-bar {
+  background-color: var(--color-lime);
+}
+
+/* ---- stacked bands -------------------------------------------------------
+   No `overflow: hidden` here on purpose: it would break `position: sticky`
+   for the pinned classes track nested inside one of these frames. The radius
+   is passed to the band itself, which is what paints the background. */
+
+.stack-frame {
+  position: relative;
+  transform: scale(var(--stack-scale, 1));
+  transform-origin: 50% 0%;
+  transition: transform 0.15s linear;
+  will-change: transform;
+}
+
+.stack-round {
+  border-top-left-radius: 2.5rem;
+  border-top-right-radius: 2.5rem;
+  box-shadow: 0 -24px 60px -40px rgba(0, 0, 0, 0.55);
+}
+
+.stack-round > :first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+/* ---- split text ---------------------------------------------------------
+   Characters start below their line and rise in sequence. They are opaque
+   from the start, so a heading that never gets revealed still reads. */
+
+.split-char {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.split-char > span {
+  display: inline-block;
+  transform: translateY(105%);
+  transition: transform 0.75s var(--ease-out-soft);
+  transition-delay: var(--char-delay, 0ms);
+}
+
+.split.is-in .split-char > span {
+  transform: none;
+}
+
+/* ---- intro curtain ------------------------------------------------------- */
+
+.intro-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--color-ink);
+  transform: translateY(0);
+  transition: transform 1s var(--ease-out-soft);
+}
+
+.intro-curtain.is-lifting {
+  transform: translateY(-100%);
+}
+
+/* ---- photo-fill headline ------------------------------------------------
+   The hero type is filled with the club photo. A white wash is blended over
+   the image inside the glyphs — the raw photo is too dark against the hero to
+   stay readable. */
+
+.photo-fill {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.84)),
+    url("/media/hero.jpg");
+  background-size: 130% auto;
+  /* pull the bright torso of the photo into the glyphs; the top of the frame
+     is near-black and swallows whole letters */
+  background-position: 50% 62%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- custom cursor ------------------------------------------------------
+   The class is added by Cursor.tsx itself, so if the script never runs the
+   native cursor is left alone rather than hidden with nothing to replace it. */
+
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #fff;
+  pointer-events: none;
+  /* inverts against whatever is underneath — works on both the light bands
+     and the black sections without tracking which one we are over */
+  mix-blend-mode: difference;
+  transition:
+    width 0.32s var(--ease-out-soft),
+    height 0.32s var(--ease-out-soft);
+}
+
+.cursor-dot[data-label] {
+  width: 74px;
+  height: 74px;
+}
+
+.cursor-dot span {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-dot[data-label] span {
+  opacity: 1;
+}
+
+/* ---- drifting media -----------------------------------------------------
+   DriftImage.tsx writes --drift (-1..1) from the element's position in the
+   viewport; the image floats inside its own frame, which is why every frame
+   is overflow-hidden and the image is oversized. */
+
+.drift {
+  transform: translate3d(0, calc(var(--drift, 0) * 4%), 0) scale(1.12);
+  will-change: transform;
+}
+
+/* ---- pinned horizontal track --------------------------------------------- */
+
+.pin-track {
+  will-change: transform;
+}
+
+/* ---- hero scroll cue ----------------------------------------------------- */
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(300%);
+  }
+}
+
+/* ---- ticker -------------------------------------------------------------- */
+
+.ticker {
+  overflow: hidden;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll var(--ticker-duration, 34s) linear infinite;
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* ---- marquee ------------------------------------------------------------ */
+
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 48s) linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* the track renders its children twice, so half a loop is a seamless wrap */
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  [data-reveal],
+  .mask-line > span {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  [data-reveal="clip"] {
+    clip-path: none;
+  }
+  .lift:hover {
+    transform: none;
+  }
+  .tilt {
+    transform: none;
+  }
+  .marquee-track,
+  .ticker-track {
+    animation: none !important;
+  }
+  .drift {
+    transform: none;
+  }
+  .has-custom-cursor,
+  .has-custom-cursor * {
+    cursor: auto !important;
+  }
+  .stack-frame {
+    transform: none;
+  }
+  .split-char > span {
+    transform: none;
+    transition: none;
+  }
+  #theme-layer {
+    transition: none;
+  }
+}
+
+/* ---- focus -------------------------------------------------------------- */
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
