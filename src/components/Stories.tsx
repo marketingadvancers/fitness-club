@@ -9,7 +9,7 @@ export default function Stories() {
   const track = [...stories.items, ...stories.items];
 
   return (
-    <section data-tone="shell" className="bg-shell py-20 sm:py-28">
+    <section id="stories" data-tone="shell" className="bg-shell py-20 sm:py-28">
       <Container>
         <Reveal>
           <SectionHead eyebrow={stories.eyebrow} title={stories.title} lede={stories.lede} />

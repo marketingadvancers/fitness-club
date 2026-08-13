@@ -220,13 +220,37 @@ export const closing = {
 
 export const footer = {
   gallery: ["/media/gallery-1.jpg", "/media/gallery-2.jpg", "/media/gallery-3.jpg"],
+  // Every entry points at a section that exists on the page. Anything without a
+  // destination — the legal pages, careers, the social accounts — is left out
+  // rather than parked on "#": a footer full of links that go nowhere costs
+  // more trust than the missing rows do.
   columns: [
     {
       title: "Classes",
-      links: ["Slow Flow Yoga", "Metcon 45", "Kettlebell Club", "Rhythm Cardio", "Deep Stretch"],
+      links: [
+        { label: "Slow Flow Yoga", href: "#classes" },
+        { label: "Metcon 45", href: "#classes" },
+        { label: "Kettlebell Club", href: "#classes" },
+        { label: "Rhythm Cardio", href: "#classes" },
+        { label: "Deep Stretch", href: "#classes" },
+        { label: "Reformer Pilates", href: "#pilates" },
+      ],
     },
-    { title: "Club", links: ["Memberships", "Find a Club", "Personal Coaching", "Corporate Plans", "Day Passes"] },
-    { title: "More", links: ["Journal", "Work With Us", "Privacy Policy", "Terms of Membership"] },
-    { title: "Social", links: ["Instagram", "Facebook", "YouTube", "WhatsApp"] },
+    {
+      title: "Club",
+      links: [
+        { label: "Memberships", href: "#perks" },
+        { label: "Find a Club", href: "#clubs" },
+        { label: "Personal Coaching", href: "#training" },
+        { label: "Free Week", href: "#contact" },
+      ],
+    },
+    {
+      title: "More",
+      links: [
+        { label: "Journal", href: "#journal" },
+        { label: "Member Stories", href: "#stories" },
+      ],
+    },
   ],
 };

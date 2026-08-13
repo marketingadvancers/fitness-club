@@ -25,6 +25,13 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* An anchored section otherwise stops with its top edge at y=0, tucked under
+   the fixed nav pill — it clears by about ten pixels, which reads as the
+   heading being cut off rather than as arriving somewhere. */
+section[id] {
+  scroll-margin-top: 6.5rem;
+}
+
 body {
   background: var(--color-shell);
   color: var(--color-ink);

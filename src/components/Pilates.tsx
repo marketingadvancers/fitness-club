@@ -5,7 +5,7 @@ import { Button, Container, Eyebrow } from "./ui";
 
 export default function Pilates() {
   return (
-    <section data-tone="ink" className="bg-ink py-20 text-white sm:py-28">
+    <section id="pilates" data-tone="ink" className="bg-ink py-20 text-white sm:py-28">
       <Container>
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
           <Reveal className="order-2 grid grid-cols-2 gap-5 lg:order-1">

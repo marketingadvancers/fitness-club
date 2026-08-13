@@ -30,15 +30,18 @@ export default function SiteFooter() {
             </ul>
           </div>
 
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {footer.columns.map((col) => (
               <nav key={col.title}>
                 <p className="eyebrow text-white/40">{col.title}</p>
                 <ul className="mt-4 space-y-2.5">
-                  {col.links.map((label) => (
-                    <li key={label}>
-                      <Link href="#top" className="text-white/75 transition-colors hover:text-lime">
-                        {label}
+                  {col.links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-white/75 transition-colors hover:text-lime"
+                      >
+                        {link.label}
                       </Link>
                     </li>
                   ))}

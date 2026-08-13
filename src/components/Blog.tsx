@@ -5,7 +5,7 @@ import { Button, Container, Eyebrow } from "./ui";
 
 export default function Blog() {
   return (
-    <section data-tone="paper" className="bg-white py-20 sm:py-28">
+    <section id="journal" data-tone="paper" className="bg-white py-20 sm:py-28">
       <Container>
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <Reveal className="max-w-2xl">
